@@ -1,10 +1,16 @@
 import Phaser from 'phaser';
 
 const charPaths = {
-  topLeft: '/assets/2DA643EE-8795-4BEC-8220-1CB4AE32C456.png',
-  topMiddle: '/assets/531AB61F-687D-4835-919B-30AB9EC292A5.png',
-  topRight: '/assets/14B7E1BF-7793-4908-8645-9B385F0C2A3A.png'
+  demonRook: '/assets/2DA643EE-8795-4BEC-8220-1CB4AE32C456.png',
+  sniperBishop: '/assets/531AB61F-687D-4835-919B-30AB9EC292A5.png',
+  wizardKnight: '/assets/14B7E1BF-7793-4908-8645-9B385F0C2A3A.png'
 };
+
+const cellCharacters = [
+  ['demonRook', 'sniperBishop', 'wizardKnight'],
+  ['sniperBishop', 'wizardKnight', 'demonRook'],
+  ['wizardKnight', 'demonRook', 'sniperBishop']
+];
 
 const config = {
   type: Phaser.AUTO,
@@ -24,11 +30,9 @@ const config = {
     },
     create() {
       const grid = this.add.graphics();
-      const positions = [
-        { key: 'topLeft', x: 0, y: 0 },
-        { key: 'topMiddle', x: 1, y: 0 },
-        { key: 'topRight', x: 2, y: 0 }
-      ];
+      const sprites = cellCharacters.map((row) =>
+        row.map((key) => this.add.image(0, 0, key).setOrigin(0.5))
+      );
 
       const drawGrid = (gameSize) => {
         const { width, height } = gameSize;
@@ -37,6 +41,8 @@ const config = {
         const gridSize = cellSize * 3 + gap * 2;
         const startX = (width - gridSize) / 2;
         const startY = (height - gridSize) / 2;
+        const padding = cellSize * 0.18;
+        const imageSize = cellSize - padding * 2;
 
         grid.clear();
         grid.fillStyle(0x202027, 1);
@@ -48,29 +54,13 @@ const config = {
             const y = startY + row * (cellSize + gap);
             grid.fillRect(x, y, cellSize, cellSize);
             grid.strokeRect(x, y, cellSize, cellSize);
+
+            const sprite = sprites[row][column];
+            sprite.setPosition(x + cellSize / 2, y + cellSize / 2);
+            const scale = Math.min(imageSize / sprite.width, imageSize / sprite.height);
+            sprite.setScale(scale);
           }
         }
-
-        positions.forEach(({ key, x, y }) => {
-          const image = this.children.getByName(key);
-          if (image) {
-            image.destroy();
-          }
-
-          const cellX = startX + x * (cellSize + gap) + cellSize / 2;
-          const cellY = startY + y * (cellSize + gap) + cellSize / 2;
-          const sprite = this.add.image(cellX, cellY, key);
-          sprite.name = key;
-
-          const padding = cellSize * 0.18;
-          const scale = Math.min(
-            (cellSize - padding * 2) / sprite.width,
-            (cellSize - padding * 2) / sprite.height
-          );
-
-          sprite.setScale(scale);
-          sprite.setOrigin(0.5);
-        });
       };
 
       drawGrid(this.scale.gameSize);
