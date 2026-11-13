@@ -1,5 +1,11 @@
 import Phaser from 'phaser';
 
+const charPaths = {
+  topLeft: '/assets/2DA643EE-8795-4BEC-8220-1CB4AE32C456.png',
+  topMiddle: '/assets/531AB61F-687D-4835-919B-30AB9EC292A5.png',
+  topRight: '/assets/2DA643EE-8795-4BEC-8220-1CB4AE32C456.png'
+};
+
 const config = {
   type: Phaser.AUTO,
   parent: 'app',
@@ -12,15 +18,17 @@ const config = {
   },
   scene: {
     preload() {
-      this.load.image(
-        'wizardKnight',
-        '/assets/2DA643EE-8795-4BEC-8220-1CB4AE32C456.png'
-      );
+      Object.entries(charPaths).forEach(([key, path]) => {
+        this.load.image(key, path);
+      });
     },
     create() {
       const grid = this.add.graphics();
-      const knight = this.add.image(0, 0, 'wizardKnight');
-      knight.setVisible(true);
+      const positions = [
+        { key: 'topLeft', x: 0, y: 0 },
+        { key: 'topMiddle', x: 1, y: 0 },
+        { key: 'topRight', x: 2, y: 0 }
+      ];
 
       const drawGrid = (gameSize) => {
         const { width, height } = gameSize;
@@ -43,17 +51,26 @@ const config = {
           }
         }
 
-        const centerX = startX + cellSize + gap + cellSize / 2;
-        const centerY = startY + cellSize + gap + cellSize / 2;
-        knight.setPosition(centerX, centerY);
+        positions.forEach(({ key, x, y }) => {
+          const image = this.children.getByName(key);
+          if (image) {
+            image.destroy();
+          }
 
-        const padding = cellSize * 0.18;
-        const scale = Math.min(
-          (cellSize - padding * 2) / knight.width,
-          (cellSize - padding * 2) / knight.height
-        );
+          const cellX = startX + x * (cellSize + gap) + cellSize / 2;
+          const cellY = startY + y * (cellSize + gap) + cellSize / 2;
+          const sprite = this.add.image(cellX, cellY, key);
+          sprite.name = key;
 
-        knight.setScale(scale);
+          const padding = cellSize * 0.18;
+          const scale = Math.min(
+            (cellSize - padding * 2) / sprite.width,
+            (cellSize - padding * 2) / sprite.height
+          );
+
+          sprite.setScale(scale);
+          sprite.setOrigin(0.5);
+        });
       };
 
       drawGrid(this.scale.gameSize);
