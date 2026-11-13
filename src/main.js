@@ -30,6 +30,13 @@ const config = {
     },
     create() {
       const grid = this.add.graphics();
+      const spinButton = this.add.graphics();
+      const spinText = this.add.text(0, 0, 'SPIN', {
+        color: '#ffffff',
+        fontSize: '24px',
+        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontStyle: 'bold'
+      }).setOrigin(0.5);
       const sprites = cellCharacters.map((row) =>
         row.map((key) => this.add.image(0, 0, key).setOrigin(0.5))
       );
@@ -61,6 +68,29 @@ const config = {
             sprite.setScale(scale);
           }
         }
+
+        const buttonWidth = Math.min(190, width * 0.72);
+        const buttonHeight = Math.min(58, Math.max(44, cellSize * 0.48));
+        const buttonX = (width - buttonWidth) / 2;
+        const buttonY = startY + gridSize + Math.max(18, cellSize * 0.16);
+        const radius = Math.min(14, buttonHeight * 0.24);
+
+        spinButton.clear();
+        spinButton.fillStyle(0x000000, 1);
+        spinButton.fillRoundedRect(buttonX, buttonY, buttonWidth, buttonHeight, radius);
+        spinButton.fillStyle(0xd71920, 1);
+        spinButton.fillRoundedRect(buttonX + 2, buttonY + 2, buttonWidth - 4, buttonHeight - 4, radius - 2);
+        spinButton.fillStyle(0xffffff, 0.13);
+        spinButton.fillRoundedRect(
+          buttonX + 5,
+          buttonY + 4,
+          buttonWidth - 10,
+          (buttonHeight - 8) * 0.42,
+          Math.max(4, radius - 4)
+        );
+
+        spinText.setPosition(width / 2, buttonY + buttonHeight / 2);
+        spinText.setFontSize(Math.min(24, buttonHeight * 0.42));
       };
 
       drawGrid(this.scale.gameSize);
