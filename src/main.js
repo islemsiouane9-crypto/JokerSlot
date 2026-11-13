@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 const charPaths = {
   topLeft: '/assets/2DA643EE-8795-4BEC-8220-1CB4AE32C456.png',
   topMiddle: '/assets/531AB61F-687D-4835-919B-30AB9EC292A5.png',
-  topRight: '/assets/2DA643EE-8795-4BEC-8220-1CB4AE32C456.png'
+  topRight: '/assets/14B7E1BF-7793-4908-8645-9B385F0C2A3A.png'
 };
 
 const config = {
